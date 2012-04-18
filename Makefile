@@ -44,10 +44,12 @@ image: all
 .PHONY: linux
 linux: $(BUILDROOT_INSTALLED_FLAG) 
 	make -C buildroot
+	$(BUILDROOT_CUSTOMIZATION)/config/buildroot_config
 
 .PHONY: menuconfig
-menuconfig: 
+buildroot-menuconfig: 
 	make -C buildroot menuconfig
+	cp buildroot/.config mpbox_buildroot/config/buildroot_config
 
 .PHONY: download
 download: $(THIRDPARTY_DOWNLOADED_FLAG)
