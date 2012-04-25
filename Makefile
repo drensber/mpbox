@@ -44,7 +44,6 @@ image: all
 .PHONY: linux
 linux: $(BUILDROOT_INSTALLED_FLAG) 
 	make -C buildroot
-	$(BUILDROOT_CUSTOMIZATION)/config/buildroot_config
 
 .PHONY: menuconfig
 buildroot-menuconfig: 
