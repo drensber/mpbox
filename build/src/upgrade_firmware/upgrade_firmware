@@ -1,0 +1,63 @@
+#!/bin/ash
+#
+# upgrade_firmware - a script to upgrade the firmware in a mpbox
+#
+
+# "source" the configuration parameters
+. /mpservice/bin/mpservice_shell_config.sh
+
+if [ ${#} = 0 ]; then
+    URL=${upgrade_url}
+else
+    URL=${1}
+fi
+
+cd /tmp
+
+echo "Starting firmware upgrade"
+wget ${URL}
+if [ $? != 0 ]; then
+  echo "wget of ${URL} failed" | tee | logger
+  exit 1
+fi
+
+mv `basename ${URL}` images.tgz
+
+tar xzf images.tgz
+
+if [ $? != 0 ]; then
+  echo "Error untarring images.tgz" | tee | logger
+  exit 2
+fi
+
+if [ ! -f images/initrd.bin ]; then
+  echo "No initrd.bin found in images.tgz" | tee | logger
+  exit 3
+fi
+if [ ! -f images/bzImage ]; then
+  echo "No bzImage found in images.tgz" | tee | logger
+  exit 4
+fi
+
+# Archiving the currently running firmware as _safe
+mv /disk1/initrd.bin /disk1/initrd_safe.bin
+mv /disk1/bzImage /disk1/bzImage_safe
+
+cp images/bzImage /disk1/bzImage
+if [ $? != 0 ]; then
+  echo "Couldn't rename images/bzImage" | tee | logger
+  exit 6
+fi
+cp images/initrd.bin /disk1/initrd.bin
+if [ $? != 0 ]; then
+  echo "Couldn't rename images/initrd" | tee | logger
+  exit 7
+fi
+
+
+rm -rf images images.tgz
+sync
+echo "Firmware successfully upgraded.  Rebooting in 5 seconds." | tee | logger
+sleep 5
+/sbin/reboot
+
