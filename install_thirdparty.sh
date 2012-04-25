@@ -2,7 +2,7 @@
 set -e
 
 #MPBOX_PACKAGES="http://www.uclinux.org/pub/uClinux/dist/uClinux-dist-20110603.tar.bz2 http://busybox.net/downloads/busybox-1.18.5.tar.bz2 http://r8168.googlecode.com/files/r8168-8.024.00.tar.bz2 http://www.sqlite.org/sqlite-amalgamation-3.6.23.1.tar.gz" 
-MPBOX_PACKAGES="http://www.buildroot.org/downloads/buildroot-2012.02.tar.gz"
+MPBOX_PACKAGES="http://www.buildroot.org/downloads/buildroot-2012.02.tar.gz https://github.com/downloads/drensber/mpservice/mpservice-0.2.8.tar.gz"
 
 if [ ${#} == "1" ] && [ ${@} == "local" ]; then
   if [ "${THIRDPARTY_PACKAGE_DIR}" == "" ]; then

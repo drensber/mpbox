@@ -1,6 +1,6 @@
 #
 # Automatically generated make config: don't edit
-# Buildroot 2012.02-gff746cf Configuration
+# Buildroot 2012.02-g72139f7 Configuration
 #
 BR2_HAVE_DOT_CONFIG=y
 # BR2_arm is not set
@@ -205,7 +205,7 @@ BR2_ROOTFS_STATIC_DEVICE_TABLE="target/generic/device_table_dev.txt"
 # BR2_ROOTFS_SKELETON_DEFAULT is not set
 BR2_ROOTFS_SKELETON_CUSTOM=y
 BR2_ROOTFS_SKELETON_CUSTOM_PATH="$(TOPDIR)/../mpbox_buildroot/fs/skeleton"
-BR2_ROOTFS_POST_BUILD_SCRIPT=""
+BR2_ROOTFS_POST_BUILD_SCRIPT="$(TOPDIR)/../mpbox_buildroot/post-build-script.sh"
 
 #
 # Package Selection for the target

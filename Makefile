@@ -8,6 +8,8 @@ BUILDROOT_PACKAGE=buildroot-2012.02.tar.gz
 BUILDROOT_BASE=$(shell \basename $(BUILDROOT_PACKAGE) | sed -e 's/.tar.gz//')
 PROJECT_ROOT=$(shell pwd)
 BUILDROOT_CUSTOMIZATION=$(PROJECT_ROOT)/mpbox_buildroot
+BR_OUTPUT=buildroot/output
+BR_BUILD=$(BR_OUTPUT)/build
 
 .PHONY: help
 help:
@@ -88,8 +90,8 @@ firmwarepackage:
 	rm -rf images
 	mv images.tgz mpbox.fw
 
-clean-staging:
-	#rm -rf uClinux-dist/romfs/*
+clean-target:
+	rm -rf $(BR_OUTPUT)/target $(BR_OUTPUT)/staging $(BR_OUTPUT)/stamps $(BR_BUILD)/.root $(BR_BUILD)/*/.stamp_target_installed $(BR_BUILD)/*/.stamp_staging_installed $(BR_BUILD)/linux-*/.stamp_installed $(BR_BUILD)/*/.built
 	rm -f mpbox.fw
 
 clean:
