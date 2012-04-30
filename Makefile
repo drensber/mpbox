@@ -4,8 +4,11 @@
 #
 THIRDPARTY_DOWNLOADED_FLAG=downloads/.downloaded
 BUILDROOT_INSTALLED_FLAG=buildroot/.installed
+MPSERVICE_INSTALLED_FLAG=mpservice/.installed
 BUILDROOT_PACKAGE=buildroot-2012.02.tar.gz
+MPSERVICE_PACKAGE=mpservice-0.2.8.tar.bz
 BUILDROOT_BASE=$(shell \basename $(BUILDROOT_PACKAGE) | sed -e 's/.tar.gz//')
+MPSERVICE_BASE=$(shell \basename $(MPSERVICE_PACKAGE) | sed -e 's/.tar.bz//')
 PROJECT_ROOT=$(shell pwd)
 BUILDROOT_CUSTOMIZATION=$(PROJECT_ROOT)/mpbox_buildroot
 BR_OUTPUT=buildroot/output
@@ -44,7 +47,7 @@ images: image
 image: all
 
 .PHONY: linux
-linux: $(BUILDROOT_INSTALLED_FLAG) 
+linux: $(BUILDROOT_INSTALLED_FLAG) $(MPSERVICE_INSTALLED_FLAG)
 	make -C buildroot
 
 .PHONY: menuconfig
@@ -76,8 +79,13 @@ $(BUILDROOT_INSTALLED_FLAG): $(THIRDPARTY_DOWNLOADED_FLAG)
 	mv $(BUILDROOT_BASE) buildroot
 	ln -s $(BUILDROOT_CUSTOMIZATION) buildroot/target/mpbox
 	cp $(BUILDROOT_CUSTOMIZATION)/config/buildroot_config buildroot/.config
-	echo "\"$(ESCAPED_TPD)\""
 	touch $(BUILDROOT_INSTALLED_FLAG)
+
+$(MPSERVICE_INSTALLED_FLAG): $(THIRDPARTY_DOWNLOADED_FLAG)
+	tar xjf downloads/$(MPSERVICE_PACKAGE)
+	mv $(MPSERVICE_BASE) mpservice
+	touch $(MPSERVICE_INSTALLED_FLAG)
+
 
 .PHONY: firmwarepackage
 firmwarepackage:

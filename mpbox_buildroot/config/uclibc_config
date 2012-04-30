@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
 # Version: 0.9.32.1
-# Sat Apr 14 22:22:33 2012
+# Sun Apr 29 21:33:35 2012
 #
 # TARGET_alpha is not set
 # TARGET_arm is not set
@@ -70,7 +70,7 @@ DO_C99_MATH=y
 # DO_XSI_MATH is not set
 # UCLIBC_HAS_FENV is not set
 UCLIBC_HAS_LONG_DOUBLE_MATH=y
-KERNEL_HEADERS="/home/dave/Downloads/buildroot-2012.02/output/toolchain/linux/include"
+KERNEL_HEADERS="/home/dave/git_src/mpbox/buildroot/output/toolchain/linux/include"
 HAVE_DOT_CONFIG=y
 
 #
@@ -99,7 +99,7 @@ UCLIBC_HAS_THREADS=y
 UCLIBC_HAS_TLS=y
 # PTHREADS_DEBUG_SUPPORT is not set
 UCLIBC_HAS_SYSLOG=y
-# UCLIBC_HAS_LFS is not set
+UCLIBC_HAS_LFS=y
 # MALLOC is not set
 # MALLOC_SIMPLE is not set
 MALLOC_STANDARD=y
@@ -194,6 +194,7 @@ UCLIBC_HAS_STDIO_BUILTIN_BUFFER_NONE=y
 # UCLIBC_HAS_STDIO_GETC_MACRO is not set
 # UCLIBC_HAS_STDIO_PUTC_MACRO is not set
 UCLIBC_HAS_STDIO_AUTO_RW_TRANSITION=y
+UCLIBC_HAS_FOPEN_LARGEFILE_MODE=y
 UCLIBC_HAS_FOPEN_EXCLUSIVE_MODE=y
 UCLIBC_HAS_GLIBC_CUSTOM_STREAMS=y
 UCLIBC_HAS_PRINTF_M_SPEC=y
@@ -242,7 +243,7 @@ UCLIBC_BUILD_NOEXECSTACK=y
 #
 # uClibc development/debugging options
 #
-CROSS_COMPILER_PREFIX="/home/dave/Downloads/buildroot-2012.02/output/host/usr/bin/i586-unknown-linux-uclibc-"
+CROSS_COMPILER_PREFIX="/home/dave/git_src/mpbox/buildroot/output/host/usr/bin/i586-unknown-linux-uclibc-"
 UCLIBC_EXTRA_CFLAGS=""
 # DODEBUG is not set
 DOSTRIP=y
