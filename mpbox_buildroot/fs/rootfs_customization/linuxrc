@@ -1,0 +1,46 @@
+#!/bin/sh
+
+echo "Running the mpbox linuxrc"
+
+echo "Loading IDE kernel modules"
+
+modprobe ide-core
+modprobe ide-generic probe_mask=0x01
+
+#
+# Mount proc and sysfs
+#
+echo "Mounting /proc"
+/bin/mount -t proc proc /proc
+echo "Mounting /sys"
+/bin/mount -t sysfs sys /sys
+
+# remount root ramdisk partition as read-write
+echo "Remounting /"
+/bin/mount / -o remount,rw
+
+"Mounting /dev/shm, etc."
+/bin/mkdir -p /dev/pts
+/bin/mkdir -p /dev/shm
+/bin/mount -a
+/bin/hostname -F /etc/hostname
+
+echo "Mounting /mpservice/librarydb as a tmpfs"
+mkdir /mpservice/librarydb
+mount -t tmpfs -o size=6M tmpfs /mpservice/librarydb
+chmod 777 /mpservice/librarydb
+
+echo "Mounting /disk1"
+mount /dev/hda1 /disk1
+
+if [ ! -f /disk1/mpservice_configuration.xml ]; then
+  cp /mpservice/misc/mpbox_default_configuration.xml /disk1/mpservice_configuration.xml
+fi
+
+echo "mpservice" > /etc/Services.txt
+echo "_http._tcp" >> /etc/Services.txt
+echo "80" >> /etc/Services.txt
+echo "name=val1" >> /etc/Services.txt
+
+
+exec /sbin/init
