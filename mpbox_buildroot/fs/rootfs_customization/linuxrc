@@ -26,7 +26,6 @@ echo "Remounting /"
 /bin/hostname -F /etc/hostname
 
 echo "Mounting /mpservice/librarydb as a tmpfs"
-mkdir /mpservice/librarydb
 mount -t tmpfs -o size=6M tmpfs /mpservice/librarydb
 chmod 777 /mpservice/librarydb
 
@@ -41,6 +40,5 @@ echo "mpservice" > /etc/Services.txt
 echo "_http._tcp" >> /etc/Services.txt
 echo "80" >> /etc/Services.txt
 echo "name=val1" >> /etc/Services.txt
-
 
 exec /sbin/init
