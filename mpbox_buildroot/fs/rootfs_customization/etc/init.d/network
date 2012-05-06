@@ -1,0 +1,126 @@
+#!/bin/ash
+
+set_up_interfaces() {
+    for face in $(cd /etc/init.d; ls net.* | awk -F . '{ print $2 }'); do
+        # If this  interface if found  in mpservice configuraton, or an argument was
+        # supplied to  this function  call (i.e. failsafe  mode), then
+        # this interface is good.
+        if [ -n "$(eval echo \"\$\{iface_${face}\}\")" -o -n "$1" ]; then
+            if [ -z "${ACTIVE_INTERFACES}" ]; then
+                ACTIVE_INTERFACES=$face
+            else
+                ACTIVE_INTERFACES="$ACTIVE_INTERFACES $face"
+            fi
+        fi
+    done
+}
+
+
+start() {
+
+    . /mpservice/bin/mpservice_shell_config.sh
+
+    set_up_interfaces
+ 
+    # Set the hostname
+    echo "Setting hostname"
+    MAC_ADDRESS=`/sbin/ifconfig eth0 |grep eth0 |awk '{ print $5 }' | tr A-Z a-z`
+
+    if [ -z "${MAC_ADDRESS}" ]; then
+        MAC_HOST="000000"
+    fi
+
+    MAC_HOST=$(/bin/echo ${MAC_ADDRESS}|/bin/sed -e 's/://g'|/usr/bin/cut -c 7-12)
+    if [ "$hostname_automatic" = "Y" ]; then
+        hostname="${hostname}-${MAC_HOST}"
+    else
+        hostname="${hostname:-mpbox-${MAC_HOST}}"
+    fi
+    hostname ${hostname}
+
+    # resolv.conf
+    echo "Setting up resolv.conf"
+    if [ -n "$primary_dns" -o -n "$secondary_dns" -o -n "$domain_name" ]; then
+        rm -f /var/tmp/resolv.conf
+        touch /var/tmp/resolv.conf
+
+        if [ -n "$primary_dns" ]; then
+            echo nameserver $primary_dns >> /var/tmp/resolv.conf
+        fi
+
+        if [ -n "$secondary_dns" ]; then
+            echo nameserver $secondary_dns >> /var/tmp/resolv.conf
+        fi
+
+        if [ -n "$domain_name" ]; then
+            echo search $domain_name >> /var/tmp/resolv.conf
+        fi
+    fi
+
+    if [ ! -L /etc/resolv.conf ]; then
+        rm -f /etc/resolv.conf
+        ln -s /var/tmp/resolv.conf /etc/resolv.conf
+    fi
+
+    # net.lo
+    echo "Setting up local network interface"
+    ifconfig lo 127.0.0.1
+    route add -net 127.0.0.0 netmask 255.255.255.0 lo
+
+
+    # Start network interfaces
+    echo "Starting network interfaces"
+    for interface in $ACTIVE_INTERFACES; do
+        /etc/init.d/net.$interface start
+    done
+
+    # Rendezvous
+    echo "Setting up Bonjour"
+    MDNS_NAME="mpservice audio player"
+
+    cat > /var/tmp/mdns.conf <<END_OF_MDNS
+$MDNS_NAME (${hostname})
+_http._tcp.
+80
+END_OF_MDNS
+
+# restart all of the network services
+/etc/init.d/restart-services
+   
+}
+
+stop() {
+
+    . /mpservice/bin/mpservice_shell_config.sh
+
+    set_up_interfaces
+
+    # net lo
+    route del -net 127.0.0.0 netmask 255.255.255.0 lo
+
+    for interface in $ACTIVE_INTERFACES; do
+        /etc/init.d/net.$interface stop
+    done
+}
+
+case "$1" in
+    start)
+        start
+    ;;
+
+    restart)
+        stop
+        start
+    ;;
+
+    stop)
+        stop
+    ;;
+
+    *)
+        echo "Usage: /etc/init.d/network {start|stop|restart}"
+        exit 1
+    ;;
+esac
+
+exit 0

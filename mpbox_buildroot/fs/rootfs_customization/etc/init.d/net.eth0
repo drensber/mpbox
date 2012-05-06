@@ -1,0 +1,253 @@
+#!/bin/ash
+#
+# Modified from 2003 ThingMagic
+# Modified from Gentoo Technologies /etc/init.d/net.eth0
+#
+# Distributed under the terms of the GNU General Public License v2
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#
+
+setup_env() {
+
+    . /mpservice/bin/mpservice_shell_config.sh
+
+    iface=`echo ${1} | sed -e "s/\./_/"`
+ 
+
+    iface_IFACE="$(eval echo \"\$\{iface_${iface}\}\")"
+    dhcpcd_IFACE="$(eval echo \"\$\{dhcpcd_${iface}\}\")"
+
+    ipaddr_IFACE="$(eval echo \"\$\{ipaddr_${iface}\}\")"
+    broadcast_IFACE="$(eval echo \"\$\{broadcast_${iface}\}\")"
+    netmask_IFACE="$(eval echo \"\$\{netmask_${iface}\}\")"
+
+    failsafe_type_IFACE="$(eval echo \"\$\{failsafe_type_${iface}\}\")"
+    failsafe_ipaddr_IFACE="$(eval echo \"\$\{failsafe_ipaddr_${iface}\}\")"
+    failsafe_netmask_IFACE="$(eval echo \"\$\{failsafe_netmask_${iface}\}\")"
+
+    status_IFACE="$(ifconfig | awk -v IFACE="${iface}" '/Link/ { if ($1 == IFACE) print "up" }')"
+
+    ifconfig_IFACE=""
+    if [ "${iface_IFACE}" != "dhcp" ]; then
+        ifconfig_IFACE="${ipaddr_IFACE}"
+
+        if [ -n "${broadcast_IFACE}" ]; then
+            ifconfig_IFACE="${ifconfig_IFACE} broadcast ${broadcast_IFACE}"
+        fi
+
+        if [ -n "${netmask_IFACE}" ]; then
+            ifconfig_IFACE="${ifconfig_IFACE} netmask ${netmask_IFACE}"
+        fi
+    else
+        if [ -z "${failsafe_ipaddr_IFACE}" ]; then
+            failsafe_ipaddr_IFACE="192.168.1.101"
+        fi
+
+        if [ -z "${failsafe_netmask_IFACE}" ]; then
+            failsafe_netmask_IFACE="255.255.255.0"
+        fi
+
+        if [ -z "${failsafe_gateway}" ]; then
+            failsafe_gateway="${iface}/192.168.1.1"
+        fi
+    fi
+}
+
+
+iface_do_dhcp() {
+    local retval=0
+
+    local IFACE="${1}"
+
+    # Try to bring up the interface using DHCP, like normal
+    dhcpcd_hostname_opt="-H $(hostname)"    
+    dhcpcd_vendor_opt="-V ${dhcpcd_vendor:-mpbox}"
+    udhcpc ${dhcpcd_IFACE} ${dhcpcd_vendor_opt} ${dhcpcd_hostname_opt} \
+        -i ${IFACE} && return 0
+
+    echo "Failed to bring ${IFACE} up using DHCP"
+
+#    For mpbox, default fall back to link-local
+    if [ "${failsafe_type_IFACE}" != "static" ]; then
+        ifconfig ${iface} up
+
+        failsafe_ipaddr_IFACE=`/bin/linklocal -q -f -i ${iface}`
+        failsafe_netmask_IFACE="255.255.0.0"
+    fi
+
+        # The interface isn't in use, so try to use it
+        ifconfig ${IFACE} ${failsafe_ipaddr_IFACE}\
+        netmask ${failsafe_netmask_IFACE} > /dev/null || {
+
+        retval=$?
+        echo "Failed to bring ${IFACE} up"
+        return ${retval}
+    }
+
+    if [ "${failsafe_type_IFACE}" == "static" ]; then
+        # We should check to see if the failsafe IP address is in use or not
+        echo "Falling back to fixed IP address"
+
+        echo "Setting default gateway"
+        # First delete any existing default gw
+        route del default \
+            dev ${failsafe_gateway%/*} &> /dev/null
+        route add default \
+            gw ${failsafe_gateway#*/} dev ${failsafe_gateway%/*} \
+            netmask 0.0.0.0 metric 1 > /dev/null || {
+
+            local error=$?
+            ifconfig ${IFACE} up &>/dev/null
+            echo "Failed to bring ${IFACE} up with a gateway"
+            return ${error}
+        }
+
+    else
+        # Use a link local address, following as much as possible of:
+        # http://files.zeroconf.org/draft-ietf-zeroconf-ipv4-linklocal.txt
+        # First delete any existing default gw
+        route del default \
+            dev ${failsafe_gateway%/*} &> /dev/null
+
+        echo "Falling back to Link Local Address"
+        retval=0
+    fi
+    return ${retval}
+}
+
+iface_start() {
+    local retval=0
+
+    setup_env ${1}
+
+    local IFACE="${1}"
+
+    echo "Bringing ${IFACE} up"
+    if [ "${iface_IFACE}" != "dhcp" ]; then
+        ifconfig ${IFACE} ${ifconfig_IFACE} > /dev/null || {
+            retval=$?
+            echo ${retval} "Failed to bring ${IFACE} up"
+            return ${retval}
+        }
+        # ifconfig do not always return failure ..
+        ifconfig ${IFACE} &> /dev/null || {
+            retval=$?
+            echo ${retval} "Failed to bring ${IFACE} up"
+            return ${retval}
+        }
+
+        if [ -n "${gateway}" ] && [ "${gateway%/*}" = "${IFACE}" ]; then
+            echo "  Setting default gateway"
+            # First delete any existing routes if it was setup by kernel ..
+            route del default dev ${gateway%/*} &> /dev/null
+            route add default gw ${gateway#*/} dev ${gateway%/*} \
+                netmask 0.0.0.0 metric 1 > /dev/null || {
+                local error=$?
+                ifconfig ${IFACE} down &>/dev/null
+                echo ${error} "Failed to bring ${IFACE} up"
+                stop
+                return ${error}
+            }
+        fi
+
+    else
+        # Check that the interface was not brought up by the kernel ...
+        if [ "${status_IFACE}" != "up" ]; then
+
+            echo "Using DHCP to bring up ${IFACE}"
+
+            iface_do_dhcp ${IFACE} || {
+                retval=$?
+                echo ${retval} "Failed to bring ${IFACE} up"
+                return ${retval}
+            }
+        fi
+    fi
+}
+
+iface_stop() {
+    setup_env ${1}
+    local IFACE="${1}"
+
+    echo "Bringing ${IFACE} down"
+
+    local count=0
+    while [ -f /var/run/dhcpcd-${IFACE}.pid -a "${count}" -lt 9 ]; do
+        echo "Shutting down DHCP on ${IFACE}"
+        /bin/kill `/bin/cat /var/run/dhcpcd-${IFACE}.pid`
+
+          # Give dhcpcd time to properly shutdown
+        sleep 1
+        count=$((count + 1))
+    done
+
+    if [ -f /var/run/dhcpcd-${IFACE}.pid ]; then
+        rm -f /var/run/dhcpcd-${IFACE}.pid
+    fi
+    rm -f /var/tmp/dhcpc/dhcpcd-${IFACE}.cache
+    rm -f /var/tmp/dhcpc/dhcpcd-${IFACE}.info
+
+    if [ "${count}" -ge 9 ]; then
+        echo "Timed out trying to stop dhcpcd"
+    fi
+
+    # Shut down the interface
+    ifconfig ${IFACE} down >/dev/null
+}
+
+iface_status() {
+    local IFACE="${1}"
+    ifconfig ${IFACE}
+}
+
+status() {
+    iface_status ${IFACE}
+}
+
+start() {
+    iface_start ${IFACE}
+}
+
+stop () {
+    iface_stop ${IFACE}
+}
+
+
+# Strip up to the last dot off to set the interface name
+IFACE=${0##*.}
+
+case "$1" in
+    start)
+        start
+        ;;
+    stop)
+        stop
+        ;;
+    restart)
+        stop
+        start
+        ;;
+    status)
+        status
+        ;;
+    *)
+        echo "usage net {start|stop|restart|status}"
+        exit 1
+esac
+
+exit 0
+
+# vim:ts=4

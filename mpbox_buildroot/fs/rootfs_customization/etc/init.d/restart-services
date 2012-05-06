@@ -1,0 +1,48 @@
+#!/bin/ash
+
+. /mpservice/bin/mpservice_shell_config.sh
+   
+# kill mDNSResponderPosix and let inittab restart it
+PID=$(ps | grep \[m\]DNS | awk '{print $1}')
+if [ -n "$PID" ]; then
+    kill $PID
+fi
+
+# kill inetd (telnetd) and let inittab restart it, if the user has
+# chosen "secure shell only" it won't restart
+killall inetd >/dev/null 2>&1
+
+ # ntpd
+if [ -z "$SAFE_MODE" ]; then
+    echo "Setting up ntp configuration file"
+    [ -f /var/tmp/dhcpc/dhcpcd-ixp1.info ] && . /var/tmp/dhcpc/dhcpcd-ixp1.info
+    NTPD_CONF=/var/tmp/ntpd.conf
+    echo "# Start of ${NTPD_CONF}" > $NTPD_CONF
+     # For backward compatibility
+
+    if [ -z "${ntp_servers}" ]; then
+        # Assign the ntp server to the ntp_servers variable
+        ntp_servers=$ntp_server
+    fi
+
+    if [ -n "${NTPSERVER}" ]; then
+        # First assign from the DHCP setting 
+        echo server ${NTPSERVER} maxpoll 6 >> $NTPD_CONF iburst
+    fi
+
+     # Create list of hosts
+    for hostname in ${ntp_servers:-localhost}; do
+        echo server $hostname maxpoll 6 >> $NTPD_CONF iburst
+    done
+
+    cat >> $NTPD_CONF <<END_OF_NTPD
+driftfile /etc/ntp.drift
+END_OF_NTPD
+
+    if [ ! -L /etc/ntpd.conf ]; then
+        rm -f /etc/ntpd.conf
+        ln -s /var/tmp/ntpd.conf /etc/ntpd.conf
+    fi
+fi
+
+exit 0

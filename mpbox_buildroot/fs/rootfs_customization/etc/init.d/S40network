@@ -6,15 +6,14 @@
 case "$1" in
   start)
  	echo "Starting network..."
-	/sbin/ifup -a
+	/etc/init.d/network start
 	;;
   stop)
 	echo -n "Stopping network..."
-	/sbin/ifdown -a
+	/etc/init.d/network stop	
 	;;
   restart|reload)
-	"$0" stop
-	"$0" start
+	/etc/init.d/network restart
 	;;
   *)
 	echo $"Usage: $0 {start|stop|restart}"
