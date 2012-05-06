@@ -50,10 +50,25 @@ image: all
 linux: $(BUILDROOT_INSTALLED_FLAG) $(MPSERVICE_INSTALLED_FLAG)
 	make -C buildroot
 
-.PHONY: menuconfig
+.PHONY: buildroot-menuconfig
 buildroot-menuconfig: 
 	make -C buildroot menuconfig
 	cp buildroot/.config mpbox_buildroot/config/buildroot_config
+
+.PHONY: busybox-menuconfig
+busybox-menuconfig: 
+	make -C buildroot busybox-menuconfig
+	cp buildroot/output/build/busybox-*/.config mpbox_buildroot/config/busybox_config
+
+.PHONY: linux-menuconfig
+linux-menuconfig: 
+	make -C buildroot linux-menuconfig
+	cp buildroot/output/build/linux-*/.config mpbox_buildroot/config/kernel_config
+
+.PHONY: uclibc-menuconfig
+uclibc-menuconfig: 
+	make -C buildroot uclibc-menuconfig
+	buildroot/output/toolchain/uClibc-*/.config mpbox_buildroot/config/uclibc_config
 
 .PHONY: download
 download: $(THIRDPARTY_DOWNLOADED_FLAG)

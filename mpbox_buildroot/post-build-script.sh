@@ -16,14 +16,21 @@ echo "cp -rf --remove-destination ${MPBOX_TOPDIR}/mpbox_buildroot/fs/rootfs_cust
 cp -rf --remove-destination ${MPBOX_TOPDIR}/mpbox_buildroot/fs/rootfs_customization/* ${TARGET_ROOTFS}
 
 echo
-echo "Building mpservice code:"
+echo "Building mpservice/src code:"
 make -C ${MPBOX_TOPDIR}/mpservice 
 
-echo "Installing mpservice code:"
+echo "Building mpbox/src code"
+make -C ${MPBOX_TOPDIR}/mpbox
+
+echo "Installing mpservice/src code:"
 make -C ${MPBOX_TOPDIR}/mpservice install \
     MPSERVICE_BIN_DIR=${TARGET_ROOTFS}/mpservice/bin \
     MPSERVICE_WWW_DIR=${TARGET_ROOTFS}/mpservice/www \
     MPSERVICE_CGI_DIR=${TARGET_ROOTFS}/mpservice/cgi-bin \
     MPSERVICE_LIB_DIR=${TARGET_ROOTFS}/lib \
     MPSERVICE_MISC_DIR=${TARGET_ROOTFS}/mpservice/misc \
+    STRIP=${CROSS_COMPILE}strip
+
+echo "Installing mpbox/src code:"
+make -C ${MPBOX_TOPDIR}/mpbox install MPBOX_INSTALL_DIR=${TARGET_ROOTFS} \
     STRIP=${CROSS_COMPILE}strip
