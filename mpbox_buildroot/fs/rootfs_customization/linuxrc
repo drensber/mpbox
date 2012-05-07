@@ -29,16 +29,39 @@ echo "Mounting /mpservice/librarydb as a tmpfs"
 mount -t tmpfs -o size=6M tmpfs /mpservice/librarydb
 chmod 777 /mpservice/librarydb
 
+#first try to mount /dev/hda1 (primary-master PATA drive) if it doesn't
+#exist, try /dev/sda1 
 echo "Mounting /disk1"
-mount /dev/hda1 /disk1
+mount -text2 /dev/hda1 /disk1
+if [ ${?} == "0" ]; then
+  echo "Mounted /disk1 on /dev/hda1"
+else
+  mount -text2 /dev/sda1 /disk1
+  if [ ${?} == "0" ]; then
+    echo "Mounted /disk1 on /dev/sda1"
+  else
+    echo "Problem: Couldn't mount /disk1 on /dev/hda1 or /dev/sda1"
+  fi
+fi
+
+
 
 if [ ! -f /disk1/mpservice_configuration.xml ]; then
+  echo "Couldn't find mpservice_configuration.xml, so creating one"
   cp /mpservice/misc/mpbox_default_configuration.xml /disk1/mpservice_configuration.xml
 fi
 
+echo "Creating mDNS configuration file"
 echo "mpservice" > /etc/Services.txt
 echo "_http._tcp" >> /etc/Services.txt
 echo "80" >> /etc/Services.txt
 echo "name=val1" >> /etc/Services.txt
+
+# Setting up mixer volume
+echo "Setting up Mixer volumes"
+aumix -v 100
+aumix -p 100
+aumix -w 100
+aumix -l 100
 
 exec /sbin/init

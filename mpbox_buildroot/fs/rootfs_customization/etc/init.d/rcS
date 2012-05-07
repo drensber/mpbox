@@ -25,3 +25,4 @@ for i in /etc/init.d/S??* ;do
     esac
 done
 
+/mpservice/bin/mount_external_media.sh

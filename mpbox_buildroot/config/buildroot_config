@@ -1,6 +1,6 @@
 #
 # Automatically generated make config: don't edit
-# Buildroot 2012.02-gec68653-dirty Configuration
+# Buildroot 2012.02-g1eac3b8-dirty Configuration
 #
 BR2_HAVE_DOT_CONFIG=y
 # BR2_arm is not set
@@ -199,7 +199,7 @@ BR2_ROOTFS_DEVICE_CREATION_STATIC=y
 # BR2_ROOTFS_DEVICE_CREATION_DYNAMIC_MDEV is not set
 # BR2_ROOTFS_DEVICE_CREATION_DYNAMIC_UDEV is not set
 BR2_ROOTFS_DEVICE_TABLE="target/generic/device_table.txt"
-BR2_ROOTFS_STATIC_DEVICE_TABLE="target/generic/device_table_dev.txt"
+BR2_ROOTFS_STATIC_DEVICE_TABLE="$(TOPDIR)/../mpbox_buildroot/device_table_dev.txt"
 # BR2_ROOTFS_SKELETON_DEFAULT is not set
 BR2_ROOTFS_SKELETON_CUSTOM=y
 BR2_ROOTFS_SKELETON_CUSTOM_PATH="$(TOPDIR)/../mpbox_buildroot/fs/skeleton"
@@ -221,7 +221,7 @@ BR2_PACKAGE_BUSYBOX_CONFIG="target/mpbox/config/busybox_config"
 #
 # BR2_PACKAGE_ALSA_LIB is not set
 # BR2_PACKAGE_ALSA_UTILS is not set
-# BR2_PACKAGE_AUMIX is not set
+BR2_PACKAGE_AUMIX=y
 # BR2_PACKAGE_FAAD2 is not set
 # BR2_PACKAGE_FLAC is not set
 

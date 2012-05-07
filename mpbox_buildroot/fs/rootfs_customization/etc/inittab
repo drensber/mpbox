@@ -21,6 +21,12 @@
 # Put a getty on the serial port
 tty1::respawn:/sbin/getty -L tty1 38400 # GENERIC_SERIAL
 
+# Start all of the mpservice stuff
+::respawn:/mpservice/bin/boa -d -c /mpservice/misc
+::respawn:/mpservice/bin/mDNSResponderPosix -f /var/tmp/mdns.conf
+::respawn:/mpservice/bin/mps-server
+::respawn:/mpservice/bin/mps-librarydbd
+
 # Stuff to do for the 3-finger salute
 ::ctrlaltdel:/sbin/reboot
 
