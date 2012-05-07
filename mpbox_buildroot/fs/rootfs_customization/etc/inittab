@@ -18,20 +18,28 @@
 # now run any rc scripts
 ::sysinit:/etc/init.d/rcS
 
-# Put a getty on the serial port
-tty1::respawn:/sbin/getty -L tty1 38400 # GENERIC_SERIAL
+# Put a getty or shell on the console
+tty1::respawn:/bin/ash -l
+#tty1::respawn:/sbin/getty 38400 tty1
+#tty2::respawn:/sbin/getty 38400 tty2 
+
+#Put a getty on the serial port
+ttyS0::respawn:/sbin/getty -L ttyS0 115200 # GENERIC_SERIAL
 
 # Start all of the mpservice stuff
 ::respawn:/mpservice/bin/boa -d -c /mpservice/misc
 ::respawn:/mpservice/bin/mDNSResponderPosix -f /var/tmp/mdns.conf
 ::respawn:/mpservice/bin/mps-server
-::respawn:/mpservice/bin/mps-librarydbd
+::respawn:/mpservice/bin/mps-librarydbd > /mpservice/misc/mps-librarydbd.err 2>&1
+
+# Start a telnetd
+::respawn:/usr/sbin/telnetd -F
 
 # Stuff to do for the 3-finger salute
 ::ctrlaltdel:/sbin/reboot
 
 # Stuff to do before rebooting
 null::shutdown:/etc/init.d/rcK
-null::shutdown:/bin/umount -a -r
-null::shutdown:/sbin/swapoff -a
+null::shutdown:/bin/umount -r /disk1
+
 
