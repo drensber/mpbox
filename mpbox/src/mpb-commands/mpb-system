@@ -2,8 +2,8 @@
 
 IFCONFIG=/sbin/ifconfig
 GREP=/bin/grep
-AWK=/bin/awk
-#AWK=/usr/bin/awk
+[ -e /bin/awk ] && AWK=/bin/awk
+[ -e /usr/bin/awk ] && AWK=/usr/bin/awk
 HOSTNAME=/bin/hostname
 ROUTE=/sbin/route
 
