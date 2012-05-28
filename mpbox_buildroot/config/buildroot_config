@@ -1,6 +1,6 @@
 #
 # Automatically generated make config: don't edit
-# Buildroot 2012.02-g5dc25cc Configuration
+# Buildroot 2012.02-geed5e16-dirty Configuration
 #
 BR2_HAVE_DOT_CONFIG=y
 # BR2_arm is not set
@@ -596,7 +596,7 @@ BR2_PACKAGE_SQLITE_STAT3=y
 #
 # BR2_PACKAGE_ENCHANT is not set
 # BR2_PACKAGE_ICU is not set
-# BR2_PACKAGE_LIBICONV is not set
+BR2_PACKAGE_LIBICONV=y
 BR2_PACKAGE_NCURSES=y
 # BR2_PACKAGE_NCURSES_TARGET_PANEL is not set
 # BR2_PACKAGE_NCURSES_TARGET_FORM is not set
@@ -617,7 +617,7 @@ BR2_PACKAGE_READLINE=y
 # BR2_PACKAGE_LIBXML2 is not set
 # BR2_PACKAGE_LIBXSLT is not set
 # BR2_PACKAGE_LIBYAML is not set
-BR2_PACKAGE_MXML=y
+# BR2_PACKAGE_MXML is not set
 # BR2_PACKAGE_XERCES is not set
 # BR2_PACKAGE_YAJL is not set
 
@@ -645,7 +645,7 @@ BR2_PACKAGE_MXML=y
 # connman needs a toolchain with resolver support
 #
 # BR2_PACKAGE_CTORRENT is not set
-# BR2_PACKAGE_CIFS_UTILS is not set
+BR2_PACKAGE_CIFS_UTILS=y
 # BR2_PACKAGE_CUPS is not set
 # BR2_PACKAGE_DHCPDUMP is not set
 # BR2_PACKAGE_DNSMASQ is not set
@@ -708,7 +708,61 @@ BR2_PACKAGE_MXML=y
 #
 # BR2_PACKAGE_RSH_REDONE is not set
 # BR2_PACKAGE_RSYNC is not set
-# BR2_PACKAGE_SAMBA is not set
+BR2_PACKAGE_SAMBA=y
+
+#
+# Samba tools selection
+#
+# BR2_PACKAGE_SAMBA_CIFS is not set
+# BR2_PACKAGE_SAMBA_EVENTLOGADM is not set
+
+#
+# findsmb       - disabled (requires nmblookup, smbclient and perl)
+#
+# BR2_PACKAGE_SAMBA_NET is not set
+# BR2_PACKAGE_SAMBA_NMBD is not set
+BR2_PACKAGE_SAMBA_NMBLOOKUP=y
+# BR2_PACKAGE_SAMBA_NTLM_AUTH is not set
+# BR2_PACKAGE_SAMBA_PDBEDIT is not set
+# BR2_PACKAGE_SAMBA_PROFILES is not set
+# BR2_PACKAGE_SAMBA_RPCCLIENT is not set
+# BR2_PACKAGE_SAMBA_SMBCACLS is not set
+# BR2_PACKAGE_SAMBA_SMBCLIENT is not set
+# BR2_PACKAGE_SAMBA_SMBCONTROL is not set
+# BR2_PACKAGE_SAMBA_SMBCQUOTAS is not set
+# BR2_PACKAGE_SAMBA_SMBD is not set
+# BR2_PACKAGE_SAMBA_SMBGET is not set
+# BR2_PACKAGE_SAMBA_SMBLDBTOOLS is not set
+# BR2_PACKAGE_SAMBA_SMBPASSWD is not set
+# BR2_PACKAGE_SAMBA_SMBSHARESEC is not set
+# BR2_PACKAGE_SAMBA_SMBSPOOL is not set
+# BR2_PACKAGE_SAMBA_SMBSTATUS is not set
+# BR2_PACKAGE_SAMBA_SMBTREE is not set
+# BR2_PACKAGE_SAMBA_SWAT is not set
+
+#
+# smbtar        - disabled (requires smbclient)
+#
+# BR2_PACKAGE_SAMBA_TDB is not set
+# BR2_PACKAGE_SAMBA_TESTPARM is not set
+# BR2_PACKAGE_SAMBA_WINBINDD is not set
+
+#
+# Samba libraries selection
+#
+# BR2_PACKAGE_SAMBA_LIBSMBCLIENT is not set
+
+#
+# Samba support selection
+#
+
+#
+# support avahi - disabled (requires avahi-daemon)
+#
+
+#
+# support gamin - disabled (requires gamin)
+#
 # BR2_PACKAGE_SER2NET is not set
 # BR2_PACKAGE_SOCAT is not set
 # BR2_PACKAGE_SPAWN_FCGI is not set

@@ -34,3 +34,11 @@ make -C ${MPBOX_TOPDIR}/mpservice install \
 echo "Installing mpbox/src code:"
 make -C ${MPBOX_TOPDIR}/mpbox install MPBOX_INSTALL_DIR=${TARGET_ROOTFS} \
     STRIP=${CROSS_COMPILE}strip
+
+echo "Stripping libcharset and libiconv"
+${CROSS_COMPILE}strip ${TARGET_ROOTFS}/usr/lib/libcharset.so.1.0.0
+${CROSS_COMPILE}strip ${TARGET_ROOTFS}/usr/lib/libiconv.so.2.5.1
+
+echo "Removing samba startup script"
+rm -f ${TARGET_ROOTFS}/etc/init.d/S91smb
+

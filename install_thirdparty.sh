@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-MPBOX_PACKAGES="http://www.buildroot.org/downloads/buildroot-2012.02.tar.gz https://github.com/downloads/drensber/mpservice/mpservice-0.2.8.tar.bz"
+MPBOX_PACKAGES="http://www.buildroot.org/downloads/buildroot-2012.02.tar.gz https://github.com/downloads/drensber/mpservice/mpservice-0.2.8.tar.bz http://r8168.googlecode.com/files/r8168-8.024.00.tar.bz2"
 
 if [ ${#} == "1" ] && [ ${@} == "local" ]; then
   if [ "${THIRDPARTY_PACKAGE_DIR}" == "" ]; then

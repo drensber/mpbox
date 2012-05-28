@@ -4,7 +4,8 @@ include ../makefile.inc
 
 #LIB_DIRS=sqlite
 EXE_DIRS=linklocal media_mount_management upgrade_firmware \
-	mpb-commands
+	mpb-commands realtek-driver
+
 ALL_DIRS=$(LIB_DIRS) $(EXE_DIRS)
 
 all: executables

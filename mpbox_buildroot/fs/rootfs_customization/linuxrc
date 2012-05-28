@@ -3,9 +3,11 @@
 echo "Running the mpbox linuxrc"
 
 echo "Loading IDE kernel modules"
-
 modprobe ide-core
 modprobe ide-generic probe_mask=0x01
+
+echo "Loading Realtek 8168 (ethernet) module"
+insmod /mpservice/modules/r8168.ko
 
 #
 # Mount proc and sysfs
@@ -30,17 +32,27 @@ mount -t tmpfs -o size=6M tmpfs /mpservice/librarydb
 chmod 777 /mpservice/librarydb
 
 #first try to mount /dev/hda1 (primary-master PATA drive) if it doesn't
-#exist, try /dev/sda1 
-echo "Mounting /disk1"
+#exist, try /dev/sda1, /dev/sdb1 
+echo "Trying to mount /disk1 on hda1"
 mount -text2 /dev/hda1 /disk1
 if [ ${?} == "0" ]; then
   echo "Mounted /disk1 on /dev/hda1"
 else
+  echo "Trying to mount /disk1 on sda1"
+  sleep 2
   mount -text2 /dev/sda1 /disk1
   if [ ${?} == "0" ]; then
     echo "Mounted /disk1 on /dev/sda1"
   else
-    echo "Problem: Couldn't mount /disk1 on /dev/hda1 or /dev/sda1"
+    echo "Trying to mount /disk1 on sdb1"
+    sleep 1
+    mount -text2 /dev/sdb1 /disk1
+    if [ ${?} == "0" ]; then
+      echo "Mounted /disk1 on /dev/sdb1"
+    else
+      echo "Problem: Couldn't mount /disk1 on /dev/hda1, /dev/sda1, or /dev/sdb1"
+      sleep 1
+    fi
   fi
 fi
 

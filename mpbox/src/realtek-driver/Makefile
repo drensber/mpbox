@@ -3,6 +3,7 @@
 include ../../makefile.inc
 
 CC=$(CROSS_COMPILE)gcc
+STRIP=$(CROSS_COMPILE)strip
 KVER=2.6.39.4
 UNPACKAGED_FLAG=.unpackaged
 
