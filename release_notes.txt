@@ -1,0 +1,461 @@
+FUTURE:
+  Core:
+  - Add config section (with firmware upgrade).
+  - Migration to TagLib.
+  - Leverage busybox as much as possible (init, for example).
+  - Change player to mplayer .
+  - Migrate to git.
+  - mps-librarydbd:shmfile_param... name change?
+  - librarydbd: improve handling of readdir and opendir so that errors 
+    can be recovered from.
+  - Macintosh standalone build.
+  - BUG: Why does mDNSResponder die after a few minutes in standalone mode?
+  - Add timeout to libmpgserver functions.  Probably makes sense to allow
+    for different timeouts for different commands (commands that perform
+    actions that rely on file access may take longer than others
+    because of sleeping disks, etc.).
+  - Add locking to mpgserver functions.
+  - Try to figure out why USB keyboard doesn't work on mini-ITX box.
+  - BUG: mps-server - "END OF PLAYLIST" state == 99% CPU (intermittent?)!
+  Web UI:
+  - General UI improvements:
+    - Make "add all" work correctly for search and random results.
+    - Preserve the state of the most recent "Traditional", "Filename", 
+      "Random", and "Search" navigations and revert to them when
+      their radio button is clicked. 
+    - Cache mps-library requests using an associative array stack.
+  - The mouse over "info" thing.
+  - Show track time.
+  - Fast-Forward, Fast-backward
+  - Make Playlist show grouped by Artist/Album headers (and remove by
+    group if there are mulitples).
+  - Use toLocaleString() to localize.
+
+0.3.0:
+  - Migration from uClinux-dist to buildroot
+  - Migration from svn to git
+
+0.2.8:
+  Revision 248:
+  - Upgrade mini-xml 2.7.
+  - Make "Cancel" and "Configure" buttons the same font size (need to test).
+  - Make mount_media... ping the server before trying to mount (test).
+
+0.2.7:
+  Revision 248:
+  - Add 'mpb-system' as a shell script.
+    - Parameters ipaddr_eth0, netmask_eth0, primary_dns, hostname, 
+  - Add 'mps-library get status
+    - Parameters number_of_artists, number_of_albums, number_of_titles.
+  - Add mps_library_get_artist_count(), mps_library_get_album_count(),
+    mps_library_get_title_count()       
+  - Create a libmpsserver-shared.c that contains "get_*_int64_value()".
+  - Make 'mps-playlist get status' conform to the <param> format.
+  - Change 'mps-player get status' to 'mps-player get summary'
+    - Only needs "state", "current_playlist_entry_id", 
+      "playlist_change_counter", "library_change_counter", 
+      "librarydbd_state"
+    - With above change, librarydbd no longer needs to keep a running
+      count of "number_of_music_files" (that can be queried from SQLite). 
+  - Change 'mps-player status' and 'mps-playlist status' so that they have
+    the same <param name= value=/> format that mps-config and mps-constants
+    have.
+  - Change mpsCommand=>mps.  Change mpsCommandGetStatus to mpsPlayerGetStatus.
+
+0.2.6:
+  Revision 245:
+  - Still had layout problems... Think I finally have it right.
+
+0.2.5 (this one's not particularly good either):
+  Revision 242:
+  - Forgot to add a line to www's makefile to install the new png files.
+
+0.2.4 (this one is bad! don't use it):
+  Revision 240:
+  - Make playlist area say <i>EMPTY</i> when the playlist is empty.
+  - Force long album names to be truncated so that "add all" doesn't
+    get wrapped and obscured (folderNavigatorDiv).
+  - Make "autoscroll" not constantly jerk you to the top when
+    the database is being populated.
+  - If search returns no results, then make it say so.
+  - Search should "select all" and set focus when either the text field
+    or the radio button are clicked.
+
+0.2.3:
+  Revision 238:
+  - Search doesn't feel quite right (tie to a different event... "text
+    changed"? use "mousedown", but delay the reading of text field?)
+  - Make Playlist navigator bounce to the bottom when new song(s) added to  
+    the queue.
+  - Make Browse By navigator return to the same scroll position that you were 
+    previously in when navigating backward.
+  - Make Browse By navigator return to the same "top level" result set
+    (random, search, or traditional/filename).
+
+0.2.2:
+  Revision 236:
+  - Make sorting case insensitive and ignore "the".
+
+0.2.1:
+  Revision 235:
+  - Made "Chooser" stuff periodically update when librarydbd is in the
+    "CREATING" state.
+    - This included making "number_of_music_files" in library_status get 
+      updated.
+  - "unique_id" ==> "id"
+  - mpeg_shm_region ==> mps_shm_region
+  - report librarydbd_state through status part of API
+
+0.2.0:
+  Revision 233:
+  - UTF-8 validation function should be expanded to:
+    - Copy instead of just validate, and copy what it can,
+      replacing bad UTF-8 sequences, etc. with '?'
+    - shorten long sequences of whitespace to 2 spaces.
+    - replace (0x01-0x1f,0x7f) with '?'
+  - Fixed :
+    BUG: mps-librarydbd weren't always (in the "cache" case) checking whether 
+    the 'album' AND 'artist' already exist when deciding whether to create 
+    a new 'album' entry.
+  - Add radio-button that allows user to change method of browsing 
+    (by random, by search).
+  - Implement "add n random songs to playlist" using database
+  - Make "back" work more like you'd expect (goes to the beginning of the
+    presently playing song, unless it's been been < (some threshold)
+    since the last button press).
+  - Interface to "add random".   
+
+0.1.1:
+  Revision 231:
+  - Quick fix to the 'invalid ASCII' problem.
+
+0.1.0:
+  Revision 229:
+  - Add radio-button that allows user to change method of browsing (by 
+    filesystem, by tag).
+  - Remove media_mount_point_dir from mpservice_constants.xml
+  - Change the "favico" thing to say something to the effect of
+    "mpservice" rather than "netmp".
+
+0.0.4:
+  Revision 227:
+  - Really stupid bug (left some smbmnt1_ stuff around).
+
+0.0.3:
+  Revision 225:
+  - Needed to add media_dir__0___mountpoint (it IS actually necessary).
+
+0.0.2:
+  Revision 222:
+  - Make "startups.sh" script in standalone installation check that
+    "media_dir__0" actually exists.
+  - MPBOX_BUILD_TARGET ==> MPSERVICE_BUILD_PLATFORM
+  - Get rid of the "smbmnt" stuff, since I don't want to be so smb
+    specific at the core.  Figure out what to do about the "smbmnt1_subdir" 
+    thing (maybe just remove it).  (*** CONFIG CHANGE ***)
+      media_mount_dir__0__ ==> media_dir__0
+      smbmnt1_servername ==> media_dir__0__servername
+      ADD media_dir__0__servertype (cifs, nfs, etc)
+      smbmnt1_mountpoint ==> media_dir__0__servervolume
+      smbmnt1_options ==> media_dir__0__mountoptions
+      smbmnt1_subdir ==> NULL (disappears because subdir is in "dir")
+  - Make names of processes and directories (mpg != mpgs) consistent,
+    and use "mps" instead (*** CONFIG CHANGE *** (tables now "mps_")).
+  - Make upgrade_firmware use /tmp as scratch area rather than the
+    flash disk.
+
+0.0.1:
+  Revision 204:
+  - Change versioning scheme.
+  - Removed all the damn perl!
+  - Break out into "mpservice" (the application), and "mpbox" (the 
+    embedded platform).
+    - Make a 'make help' target.
+    - Make daemons (mpg-server, boa, librarydbd, mDNSResponder) read 
+      configuration from XML files.
+  - Migrate systemConstants.pm stuff to XML
+    - Add functions to mpgs API to access the constants and config
+      params from XML (probably just an API to access the XML files).
+  - Simplify install and make it more distribution neutral for the mpbox/src
+    stuff (make the install happen at that level, rather than at the 
+    mpbox/Makefile level).
+
+3.0.0_DEV09:
+  Revision 180:
+  - LIBRARYDB_SCHEMA_VERSION 1 (added id field to 
+    mpgs_library_filesystem_status). 
+  Revision 159-179:
+  - Made build/install system use my makefiles, rather than the
+    uClinux-dist "platform" makefile.
+  Revision 158:
+  - split mpservice into mpservice and mpbox
+  Revision 151:
+  - changed 'netmp' directory name to 'mpservice'.
+  - changec netmp_configuration.xml to mpservice_configuration.xml
+3.0.0_DEV08:
+  Revision 148:
+  - Lots of updates to the svn_thirdparty area.
+  Revision 147:
+  - Added the externally built Realtek 8168 network driver (the one 
+    included in 2.6.39 doesn't work with 2.6.39 for some reason).
+  - Removed 'mediadbd'
+  Revision 146:
+  - Fixed some "%d"->"%ld" compiler warnings.
+  - Upgraded to uClinux-dist-20110603 and added a smbmnt1_options field
+    in the configuration file to address the issues that came about when 
+    Apple changed their SMB implementation.
+  Revision 145:
+  - Some changes related to building as standalone (mpservice) and in 
+    the embedded configuration (mpbox).
+
+
+3.0.0_DEV07:
+  Revision 143:
+  - mpgs-librarydbd optimizations:
+    - Cached artist_id and album_id so that it doesn't have to be looked
+      up in database on successive lookups of the same id.
+    - Disabled debug in default build.
+    - Created index for the update search that happens during an update.
+    - Added a few FOREIGN KEY declarations.
+ 
+3.0.0_DEV06:
+  Revision 141:
+  - Made several sqlite3 optimizations: 1. Use PRAGMAs cache_size, synchronous, 
+    and temp_store.  2. Use TRANSACTION START/END when updating.
+
+3.0.0_DEV05:
+  Revision 139:
+  - When browsing heirarchically by file, should show the filename in the 
+    browser, not the id3tag name.
+
+3.0.0_DEV04:
+  Revision 136:
+   - Only order folders (not titles) alphabetically.
+
+3.0.0_DEV03:
+  Revision 134:
+   - Didn't quite get the "order by" thing right. Trying again.
+
+3.0.0_DEV02:
+  Revision 132:
+   - Added "order by" to the mpgs-library queries;
+   - Removed the /disk2 and /playlist tmpfs's.
+
+3.0.0_DEV01:
+  - Added libmpg123 stuff to read mp3 file headers.
+  - Migrated playlist to sqlite3 implementation rather than the goofy
+    symlink /playlist thing
+  - Made mpgs-library API use mp3 header tags in addition to file and 
+    directory names.
+  - Updates mpgs-library API so that it uses file/directory names so that
+    it uses database rather than "/disk2".
+  - Allow MPGS_DBG_PRINT to be sent to stdout or syslog (see mpgs-librarydbd
+    for a good example).   
+
+2.1.0_DEV17:
+  - Retry of 2.1.0_DEV16 with mpgs-shmtool Makefile problem fixed.
+ 
+2.1.0_DEV16 (DOESN'T BUILD!):
+  Revision 124:
+  - Created a tool called mpgs-shmtool that can be used to initialize,
+    modify, and view shared memory contents. 
+  - Layed most of the groundwork for the mpg-library API that gets things
+    from the database, but won't be quite right until next checkin (need
+    separate artist & album tables in database)
+
+2.1.0_DEV15:
+  Revision 122:
+  - Upgrade busybox and build it from netmp/src (add busybox "time" command)
+  - Make librarydbd deal with mp3 files that have no title or artist
+    in header.  At least make them do an "unknown", or better yet, 
+    let them try to guess by path name (but should that be optional?).
+    iTunes just files under "unknown artist", "unknown album", and then
+    uses the filename as the basis for the title.
+    Could also guess by contents (is shazam database public)?
+  Revision 121:
+  - Optimized (or maybe un-stupified is a better word) the algorithm for
+    updating the database.
+
+2.1.0_DEV14 (not sure where 12 and 13 went):
+  Revision 119
+  - Added mpg-librarydbd (sqlite3 based library database daemon).
+    - Changed mediadb.info from raw text to a sqlite3 database.
+  - Added mpg-config to migrate /disk1/netmp.conf to XML.
+    - Define the format of the XML based config file.
+    - Write a utility called "mpgs-config-flatten" that can take an XML based
+      config file and turn it into a "<key>=<value>" file than can
+      be read by shell scripts.
+    - Write a utility called "mpgs-config-get" that can get one value from an 
+      XML based config file.
+    - Write a utility called "mpgs-config-set" that sets one value in an
+      XML based config file.
+
+2.1.0_DEV11:
+  Revision 86
+  - Changed default shell back to ash (it had gotten checked in as bash
+  for some reason.
+
+2.1.0_DEV11:
+  Revision 84
+  - Added support for Intel D945GSEJT mini-itx board.
+
+  Revision 83:
+  - Fixed a build bug that would cause 'ln -s' to fail after more than
+    one build
+  - Get rid of PERL (interpreter anyway)!!!!
+
+  Revision 82:
+  - Change mpg-command to mpgs-player and mpg-playlist to mpgs-playlist
+
+  Revision 81:
+  - Change "mediadb" to "library".
+
+  Revision 80:
+  - Make 'ajaxstart.html' become 'index.html'  This gets rid of one more 
+    level of indirection and one more perl-ism.
+
+  Revision 79:
+  - Made "Remove all" only appear when there are items in the playlist.
+
+2.1.0_DEV11:
+  Revision 77:
+  - Disallowed removal of the track that's currently playing... this 
+    is hard to even do, but bad things happen when you do it!
+  - Fixed problem where albums with ' characters don't
+    work with "add whole album"
+
+2.1.0_DEV10:
+  Revision 75:
+  Core:
+  - mediadbd should just set up a link with the name of the file (no
+    extension like ".mp3").  
+  - Removed redundant "filename" field in mpg-mediadb.  
+    'mpg-playlist add' interface shouldn't need to know
+    file_extension or format (this is resolved on the
+    back end).
+  - playist element structure now contains the more abstract "path"
+    instead of "file".
+  - "mpg-mediadb get" output header just have "parent" and "name"
+    ("name" instead of full "path") javascript functions can figure
+    out full path by just adding parent + "/" + name.
+  - Moved all of the "file" related stuff to libmpgserver-private.h.  
+    (Goal should be that C-API and XML-API users don't need to know
+     about specific files).
+  UI:
+  - Added UI support for "add folder".
+
+  Revision 74:
+  - Replace bash with busybox "ash" 
+    Ssome of the scripts (maybe just /etc/init.d/net) use some
+    of the more advanced "substitution" features in bash. Should be able to
+    substitute sed expressions.  For examples, see: 
+    http://chrischan.blog-city.com/bash_pattern_substitution.htm
+    Also, up/down-arrow history recall in bash doesn't seem to work.  May 
+    work in newer versions of busybox.  To upgrade busybox in uclinux, 
+    see: 
+    http://mailman.uclinux.org/pipermail/uclinux-dev/2010-August/002652.html 
+  - Support adding an entire folder with "mpg-playlist add"
+
+2.1.0_DEV09:
+  Revision 73:
+  - Simplified build for the netmp/src stuff (make the build
+    happen at that level, rather than at the NetMP/Makefile level).
+  Revision 70:
+  - Changed "ADD" to "-->"
+  Revision 69:
+  - FIXED: When end of playlist has been reached, playlist is displayed as 
+    empty.
+  - Changed "SKIP" -> "PLAY"
+
+2.1.0_DEV08:
+  - Fixed build/dependency issue with 2.1.0_DEV07.
+
+2.1.0_DEV07 - THIS ONE IS BAD - Doesn't build:
+  Revision 65:
+  - Add a "Playlist last changed" and "Mediadb changed" to the status
+    structure.
+  - Added the UI changes to update whenever "playlist last changed" changes
+    or "mediadb last changed" changes.
+  - Allowed MPGS_DBG_PRINT to be compiled out (via DEBUG_ENABLED).  
+  Revision 64:
+  - Fixed the "repeats the song twice" problem.  It seems to happen right 
+    after a "pause".
+  - Added an indicator of "End of Playlist has been reached" to the UI.
+  - Changed display polling interval from 5000ms to 2500ms.
+  Revision 63:
+  - Added sqlite3.
+
+2.1.0_DEV06:
+  - This one has all of the features listed in DEV04, with the URI encoding
+    problem fixed that kept "add to playlist" from working in DEV05.
+ 
+2.1.0_DEV05: - THIS ONE IS BAD - non-latin chars don't work on safari:
+  - This one has all of the features listed in DEV04, except that I 
+    added the missing file.
+
+2.1.0_DEV04: - THIS ONE IS BAD... I forgot to "svn add one file":
+  - Made libraries/includes from mpg123 go into /netmp/lib/ and 
+    /netmp/include.
+  - Made mpg-mediadbd (and associated C library) return "self" and "parent".
+  - Made mpg-playlist return "current_id=" in the header.
+  - Made upgrade_firmware script more flash intensive and less memory
+    intensive.
+  - Got basic AJAX interface to work.
+  - Refactor so that bonjour builds under the same structure as all the 
+    other 3rd party stuff (and put all of the 3rd party stuff in one place).
+  - Got UTF-8 support working!
+  - Changed system init and firmware upgrade procedures so that can run in
+    a machine with only 64M memory
+
+2.1.0_DEV03:
+  - Fixed the build problem that kept 2.1.0_DEV02 from building.
+
+2.1.0_DEV02:  - THIS ONE IS BAD! DOESN'T BUILD.
+  - Added MXML library.
+  - Added XML option to all "mpg-" commands.
+  - Moved the common stuff for "mpg-" commands into mpg-command-shared.c
+  - Added beginnings of a AJAX UI (still more or less unusable).
+
+2.1.0_DEV01:
+  - Upgraded from Snapgear 3.5 to uClinux-dist-20100315
+
+  - Doing above resulted in:
+    - Since kernel 2.6.28, probing for directly attached IDE controllers is
+      no longer the default behavior, so I'm now doing ide drivers as modules 
+      now so that the 'ide-generic probe_mask=0x01' option can be used.
+    - The sound driver has changed such that the Via target now needs 
+      different mixer settings.
+    - Can now use the perl and samba that are part of the uClinux dist, 
+      so I don't need to graft them on (but still ahve to add perl URI mod).
+
+2.0.0_DEV06:
+  - Implement the mediadb access routines
+
+  - Add number-field validation to commands.
+
+  - change mpgs_player_play_absolute to take an int rather than string argument
+
+  - related to previous, need to change perl scripts to use new "MPGS_" strings instead of "NULL", "BEGINNING", and "END".
+
+  - Added real functions for the c-library playlist insert, remove, etc.
+
+  - Make mpg-player deal with entry_id's that are shifted underneath it's feet.
+
+
+2.0.0_DEV05:
+  - changed the internal representation of the 5 digit file identifier from string to int.
+  - Added shell functions for the c-library playlist insert, remove, etc.
+
+
+2.0.0_DEV04:
+  - Upgraded to mpg123 1.10.0, and reworked the control plane to use the shared memory architecture.
+
+svn revision 39:
+  - fixed linux/limits.h problem in snapgear build system.
+
+2.0.0_DEV03:
+
+ - Fixed issue where lines in mediadb.txt started with /netshare1 rather than /disk2.  This keeps "add random" features from working correctly.
+
+
+
