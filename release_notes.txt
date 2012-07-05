@@ -1,10 +1,7 @@
 FUTURE:
   Core:
   - Add config section (with firmware upgrade).
-  - Migration to TagLib.
-  - Leverage busybox as much as possible (init, for example).
   - Change player to mplayer .
-  - Migrate to git.
   - mps-librarydbd:shmfile_param... name change?
   - librarydbd: improve handling of readdir and opendir so that errors 
     can be recovered from.
@@ -30,6 +27,9 @@ FUTURE:
   - Make Playlist show grouped by Artist/Album headers (and remove by
     group if there are mulitples).
   - Use toLocaleString() to localize.
+
+0.4.0:
+  - Migration from mpg123's library to taglib for metadata.
 
 0.3.0:
   - Migration from uClinux-dist to buildroot
