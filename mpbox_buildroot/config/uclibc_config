@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
 # Version: 0.9.32.1
-# Sun Apr 29 21:33:35 2012
+# Fri Jul  6 00:24:41 2012
 #
 # TARGET_alpha is not set
 # TARGET_arm is not set
@@ -154,7 +154,7 @@ UCLIBC_HAS_CRYPT=y
 UCLIBC_HAS_NETWORK_SUPPORT=y
 UCLIBC_HAS_SOCKET=y
 UCLIBC_HAS_IPV4=y
-# UCLIBC_HAS_IPV6 is not set
+UCLIBC_HAS_IPV6=y
 # UCLIBC_HAS_RPC is not set
 UCLIBC_USE_NETLINK=y
 # UCLIBC_SUPPORT_AI_ADDRCONFIG is not set

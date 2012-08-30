@@ -13,6 +13,7 @@ PROJECT_ROOT=$(shell pwd)
 BUILDROOT_CUSTOMIZATION=$(PROJECT_ROOT)/mpbox_buildroot
 BR_OUTPUT=buildroot/output
 BR_BUILD=$(BR_OUTPUT)/build
+VERSION_STRING=$(shell $(PROJECT_ROOT)/build_tools/version_string.sh)
 
 .PHONY: help
 help:
@@ -31,6 +32,11 @@ help:
 	@echo "  make clean-downloads - Clean the downloads directory"
 	@echo "                         (effectively undoes 'make download'"
 	@echo "                         or 'make download-local')."
+	@echo "  make buildroot-menuconfig - Configure buildroot."
+	@echo "  make busybox-menuconfig - Configure busybox."
+	@echo "  make linux-menuconfig - Configure Linux kernel."
+	@echo "  make uclibc-menuconfig - Configure uClibc."
+	@echo "  make clean-target - purge target rootfs." 
 	@echo "  make clean-staging - "
 	@echo "  make clean - "
 	@echo
@@ -107,6 +113,9 @@ $(MPSERVICE_INSTALLED_FLAG):
 .PHONY: firmwarepackage
 firmwarepackage:
 	rm -rf images; mkdir images
+	if [ -e "mpbox/src/upgrade_firmware/upgrade_script_$(VERSION_STRING)" ]; then \
+	  cp mpbox/src/upgrade_firmware/upgrade_script_$(VERSION_STRING) images/upgrade_script; \
+	fi
 	cp buildroot/output/images/bzImage images
 	cp buildroot/output/images/rootfs.ext2 images/initrd.ext2
 	gzip images/initrd.ext2

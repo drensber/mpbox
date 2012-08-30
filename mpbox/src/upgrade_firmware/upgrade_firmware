@@ -23,8 +23,13 @@ fi
 
 mv `basename ${URL}` images.tgz
 
-tar xzf images.tgz
+tar xzf images.tgz images/upgrade_script > /dev/null 2&>1
+if [ -x images/upgrade_script ]; then
+  echo "Running upgrade script"
+  images/upgrade_script
+fi
 
+tar xzf images.tgz > /dev/null 2&>1
 if [ $? != 0 ]; then
   echo "Error untarring images.tgz" | tee | logger
   exit 2
@@ -53,7 +58,6 @@ if [ $? != 0 ]; then
   echo "Couldn't rename images/initrd" | tee | logger
   exit 7
 fi
-
 
 rm -rf images images.tgz
 sync

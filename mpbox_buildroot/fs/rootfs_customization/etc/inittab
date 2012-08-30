@@ -27,10 +27,10 @@ tty1::respawn:/bin/ash -l
 ttyS0::respawn:/sbin/getty -L ttyS0 115200 # GENERIC_SERIAL
 
 # Start all of the mpservice stuff
-::respawn:/mpservice/bin/boa -d -c /mpservice/misc
-::respawn:/mpservice/bin/mDNSResponderPosix -f /var/tmp/mdns.conf
-::respawn:/mpservice/bin/mps-server
-::respawn:/mpservice/bin/mps-librarydbd > /mpservice/misc/mps-librarydbd.err 2>&1
+null::respawn:/mpservice/bin/boa -d -c /mpservice/misc
+null::respawn:/mpservice/bin/mDNSResponderPosix -f /var/tmp/mdns.conf
+null::respawn:/mpservice/bin/mps-librarydbd > /mpservice/misc/mps-librarydbd.err 2>&1
+null::respawn:/mpservice/bin/mps-server
 
 # Start a telnetd
 ::respawn:/usr/sbin/telnetd -F
